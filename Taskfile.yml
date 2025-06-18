@@ -1,0 +1,8 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  serve:
+    cmds:
+      - uv run vllm serve "Qwen/Qwen3-4B" --max-model-len 32768

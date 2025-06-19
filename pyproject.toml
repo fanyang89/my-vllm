@@ -1,10 +1,11 @@
 [project]
 name = "my-vllm"
 version = "0.1.0"
-description = "Add your description here"
+description = "vLLM deployment for myself"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "lmcache>=0.3.0",
     "torch>=2.7.0",
     "torchaudio>=2.7.0",
     "torchvision>=0.22.0",

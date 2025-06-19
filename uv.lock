@@ -11,6 +11,15 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "aiofiles"
+version = "24.1.0"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/0b/03/a88171e277e8caa88a4c77808c20ebb04ba74cc4681bf1e9416c862de237/aiofiles-24.1.0.tar.gz", hash = "sha256:22a075c9e5a3810f0c2e48f3008c94d68c65d763b9b03857924c99e57355166c" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/a5/45/30bb92d442636f570cb5651bc661f52b610e2eec3f891a5dc3a4c3667db0/aiofiles-24.1.0-py3-none-any.whl", hash = "sha256:b4ec55f4195e3eb5d7abd1bf7e061763e864dd4954231fb8539a0ef8bb8260e5" },
+]
+
+[[package]]
 name = "aiohappyeyeballs"
 version = "2.6.1"
 source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
@@ -709,6 +718,23 @@ wheels = [
 ]
 
 [[package]]
+name = "infinistore"
+version = "0.2.35"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "numpy" },
+    { name = "pybind11" },
+    { name = "torch", version = "2.7.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
+    { name = "torch", version = "2.7.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform != 'darwin'" },
+    { name = "uvicorn" },
+    { name = "uvloop" },
+]
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/ff/0f/8f91c150be8cd36d8d95469061ba375017104b1e5f67bf4da617ff090f91/infinistore-0.2.35-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:0d8fcc3b2a3fd9d9bd47ab1371af5cb86a2861f839127a0d5b1ca0dc97c49a9c" },
+]
+
+[[package]]
 name = "interegular"
 version = "0.3.3"
 source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
@@ -858,6 +884,32 @@ sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/5b/cc/8a5bf6706385c
 wheels = [
     { url = "https://mirror.nju.edu.cn/pypi/web/packages/06/cb/bf172960241842e953b3354247f792aae2fc5221552a0741a1c98f35b6f7/lm_format_enforcer-0.10.11-py3-none-any.whl", hash = "sha256:563e0dbc930a6d50fb687951506c5de098c6e962601be0ce723f3b7d0b916a1b" },
 ]
+
+[[package]]
+name = "lmcache"
+version = "0.3.0"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+dependencies = [
+    { name = "aiofiles" },
+    { name = "aiohttp" },
+    { name = "infinistore" },
+    { name = "msgspec" },
+    { name = "numpy" },
+    { name = "nvtx" },
+    { name = "prometheus-client" },
+    { name = "psutil" },
+    { name = "pyyaml" },
+    { name = "pyzmq" },
+    { name = "redis" },
+    { name = "safetensors" },
+    { name = "setuptools" },
+    { name = "setuptools-scm" },
+    { name = "sortedcontainers" },
+    { name = "torch", version = "2.7.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
+    { name = "torch", version = "2.7.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform != 'darwin'" },
+    { name = "transformers" },
+]
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/94/ef/de2f9e9232d6f6a262f9d70757efc1b971fbaac95caf30a551a7211b66b1/lmcache-0.3.0.tar.gz", hash = "sha256:2d47d0237800e5f8dc6ada5d5f3a052daf8ac3a59da361062801b9350ec63fcf" }
 
 [[package]]
 name = "markdown-it-py"
@@ -1068,6 +1120,7 @@ name = "my-vllm"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "lmcache" },
     { name = "torch", version = "2.7.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
     { name = "torch", version = "2.7.0+cu128", source = { registry = "https://download.pytorch.org/whl/cu128" }, marker = "sys_platform != 'darwin'" },
     { name = "torchaudio" },
@@ -1079,6 +1132,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "lmcache", specifier = ">=0.3.0" },
     { name = "torch", marker = "sys_platform != 'darwin'", specifier = ">=2.7.0", index = "https://download.pytorch.org/whl/cu128" },
     { name = "torch", marker = "sys_platform == 'darwin'", specifier = ">=2.7.0", index = "https://download.pytorch.org/whl/cpu" },
     { name = "torchaudio", specifier = ">=2.7.0" },
@@ -1313,6 +1367,20 @@ version = "12.8.55"
 source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
 wheels = [
     { url = "https://mirror.nju.edu.cn/pypi/web/packages/8d/cd/0e8c51b2ae3a58f054f2e7fe91b82d201abfb30167f2431e9bd92d532f42/nvidia_nvtx_cu12-12.8.55-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:2dd0780f1a55c21d8e06a743de5bd95653de630decfff40621dbde78cc307102" },
+]
+
+[[package]]
+name = "nvtx"
+version = "0.2.12"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/56/05/160dc24b6cd1e21e5b00d55a46abac5802ed7c15c675e6ce25febad2b0d7/nvtx-0.2.12.tar.gz", hash = "sha256:b871fae9b80b004e624b5755291799794287016fa6a0c8fd0fb3255393ae3bc8" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/08/e4/944e63039a0d652c843ecffb42700e2b4f596b745ac9ac6ebed937f1bce5/nvtx-0.2.12-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9ea22a86eca22fd52e3c2905654182da1fcebea6f0107e87d7dc4ec6871604ca" },
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/cf/7b/6e25716c92039a3ecc2f6f4e1380b5492b0d23af78ea862cb84e8ffe0d7b/nvtx-0.2.12-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9a279d880c27ec8c72632a0685456c170e7b12da2839c861ee461c121692aea6" },
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/7d/96/eb1078d7509b72e3e4b6dd7ff12a698951e81dcc5f20a3ad7f35d7455700/nvtx-0.2.12-cp312-cp312-win_amd64.whl", hash = "sha256:2f93e07add2544a85c202b3c710945b54b3abb6660a6a7e447395cb024938b35" },
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/55/78/88563935649f9202735ac5686fc451d3fa9f34e6592787ba224244c3570a/nvtx-0.2.12-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:871e54f95929a6c7c39b85d4111bf6af8ab43325bbc36c97a179270443896ef7" },
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/86/0c/62b1f76c84a8bed267421d11114953b5da631daeb0ec7894a91252f79b5d/nvtx-0.2.12-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2b82ad84ac8d5408851947d1d2cef3e8e627627cc2290e5150c8af0dda1e3f63" },
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/eb/41/e74ec826e1585ad6d31f41de96f6faae8ffc712a45c2b880baca4ae87a64/nvtx-0.2.12-cp313-cp313-win_amd64.whl", hash = "sha256:a37e063c3c745a4c6b561993a2dae2f67fcc26f2a2c2653f24eeae5810a2180d" },
 ]
 
 [[package]]
@@ -1697,6 +1765,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pybind11"
+version = "2.13.6"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/d2/c1/72b9622fcb32ff98b054f724e213c7f70d6898baa714f4516288456ceaba/pybind11-2.13.6.tar.gz", hash = "sha256:ba6af10348c12b24e92fa086b39cfba0eff619b61ac77c406167d813b096d39a" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/13/2f/0f24b288e2ce56f51c920137620b4434a38fd80583dbbe24fc2a1656c388/pybind11-2.13.6-py3-none-any.whl", hash = "sha256:237c41e29157b962835d356b370ededd57594a26d5894a795960f0047cb5caf5" },
+]
+
+[[package]]
 name = "pycountry"
 version = "24.6.1"
 source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
@@ -1903,6 +1980,15 @@ wheels = [
 [package.optional-dependencies]
 cgraph = [
     { name = "cupy-cuda12x", marker = "sys_platform != 'darwin'" },
+]
+
+[[package]]
+name = "redis"
+version = "6.2.0"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/ea/9a/0551e01ba52b944f97480721656578c8a7c46b51b99d66814f85fe3a4f3e/redis-6.2.0.tar.gz", hash = "sha256:e821f129b75dde6cb99dd35e5c76e8c49512a5a0d8dfdc560b2fbd44b85ca977" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/13/67/e60968d3b0e077495a8fee89cf3f2373db98e528288a48f1ee44967f6e8c/redis-6.2.0-py3-none-any.whl", hash = "sha256:c8ddf316ee0aab65f04a11229e94a64b2618451dab7a67cb2f77eb799d872d5e" },
 ]
 
 [[package]]
@@ -2134,6 +2220,19 @@ wheels = [
 ]
 
 [[package]]
+name = "setuptools-scm"
+version = "8.3.1"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "setuptools" },
+]
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/b9/19/7ae64b70b2429c48c3a7a4ed36f50f94687d3bfcd0ae2f152367b6410dff/setuptools_scm-8.3.1.tar.gz", hash = "sha256:3d555e92b75dacd037d32bafdf94f97af51ea29ae8c7b234cf94b7a5bd242a63" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/ab/ac/8f96ba9b4cfe3e4ea201f23f4f97165862395e9331a424ed325ae37024a8/setuptools_scm-8.3.1-py3-none-any.whl", hash = "sha256:332ca0d43791b818b841213e76b1971b7711a960761c5bea5fc5cdb5196fbce3" },
+]
+
+[[package]]
 name = "shellingham"
 version = "1.5.4"
 source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
@@ -2158,6 +2257,15 @@ source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
 sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/a2/87/a6771e1546d97e7e041b6ae58d80074f81b7d5121207425c964ddf5cfdbd/sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc" }
 wheels = [
     { url = "https://mirror.nju.edu.cn/pypi/web/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2" },
+]
+
+[[package]]
+name = "sortedcontainers"
+version = "2.4.0"
+source = { registry = "https://mirror.nju.edu.cn/pypi/web/simple" }
+sdist = { url = "https://mirror.nju.edu.cn/pypi/web/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88" }
+wheels = [
+    { url = "https://mirror.nju.edu.cn/pypi/web/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0" },
 ]
 
 [[package]]

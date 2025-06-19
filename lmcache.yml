@@ -1,0 +1,8 @@
+# https://docs.lmcache.ai/getting_started/quickstart/offload_kv_cache.html
+
+# Basic configurations
+chunk_size: 256
+
+# CPU offloading configurations
+local_cpu: true
+max_local_cpu_size: 5.0  # 5GB CPU memory limit

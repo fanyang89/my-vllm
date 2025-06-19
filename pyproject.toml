@@ -5,11 +5,11 @@ description = "vLLM deployment for myself"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fire>=0.7.0",
+    "python-dotenv>=1.1.0",
     "lmcache>=0.3.0",
-    "torch>=2.7.0",
-    "torchaudio>=2.7.0",
-    "torchvision>=0.22.0",
     "vllm>=0.9.1",
+    "torch>=2.7.0",
 ]
 
 [tool.uv]
@@ -34,3 +34,8 @@ explicit = true
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+]

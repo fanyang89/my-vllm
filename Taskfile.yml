@@ -3,14 +3,18 @@
 version: "3"
 
 tasks:
-  serve:
+  vllm:
     env:
       LMCACHE_CONFIG_FILE: lmcache.yml
     cmds:
       - >
-        vllm serve "Qwen/Qwen3-4B"
+        uv run vllm serve "Qwen/Qwen3-4B"
         --max-model-len 32768
         --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
+
+  lmcache:
+    cmds:
+      - uv run lmcache_server 127.0.0.1 65432
 
   test:
     cmds:
@@ -27,3 +31,7 @@ tasks:
   print:
     cmds:
       - uv run python -c "import torch; print(torch.__version__); print(torch.cuda.get_arch_list()); print(torch.randn(1).cuda())"
+
+  cuda:
+    cmds:
+      - uv run python -c "import torch; print(torch.cuda.is_available()); print(torch.randn(1).cuda())"

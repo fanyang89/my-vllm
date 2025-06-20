@@ -1,14 +1,12 @@
 # my-vllm
 
-## Example .env
-
 ```bash
-# Set token chunk size to 256
-LMCACHE_CHUNK_SIZE="256"
+# Install dependencies
+uv sync
 
- # Enable CPU memory backend
-LMCACHE_LOCAL_CPU="True" 
+# open LMCache
+task lmcache
 
-# Set CPU memory limit to 5GB
-LMCACHE_MAX_LOCAL_CPU_SIZE="5.0"
+# open another terminal
+task vllm
 ```

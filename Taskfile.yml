@@ -1,40 +1,22 @@
-# https://taskfile.dev
-
 version: "3"
 
 dotenv:
   - .env
 
 tasks:
+  lmcache:
+    cmds:
+      - uv run lmcache_server 127.0.0.1 65432
+
   vllm:
     env:
       LMCACHE_CONFIG_FILE: lmcache.yml
     cmds:
       - >
-        uv run vllm serve "Qwen/Qwen3-4B"
+        uv run vllm serve "Qwen/Qwen3-0.6B"
         --max-model-len 32768
         --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
 
-  lmcache:
-    cmds:
-      - uv run lmcache_server 127.0.0.1 65432
-
-  test:
-    cmds:
-      - >
-        curl http://10.1.2.128:8000/v1/completions
-        -H "Content-Type: application/json"
-        -d '{
-          "model": "Qwen/Qwen3-4B",
-          "prompt": "<|begin_of_text|><|system|>\nYou are a helpful AI assistant.\n<|user|>\nWhat is the capital of France?\n<|assistant|>",
-          "max_tokens": 100,
-          "temperature": 0.7
-        }'
-
-  print:
+  print-env:
     cmds:
       - uv run python -c "import torch; print(torch.__version__); print(torch.cuda.get_arch_list()); print(torch.randn(1).cuda())"
-
-  cuda:
-    cmds:
-      - uv run python -c "import torch; print(torch.cuda.is_available()); print(torch.randn(1).cuda())"

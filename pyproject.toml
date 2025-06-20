@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [tool.uv]
-index-url = "https://mirror.nju.edu.cn/pypi/web/simple"
+index-url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu128" }]

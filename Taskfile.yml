@@ -6,7 +6,7 @@ dotenv:
 tasks:
   docker:
     cmds:
-      - docker buildx build -t registry.smtx.io/fanyang/vllm-lmcache:latest .
+      - docker buildx build -t registry.smtx.io/fanyang/vllm-lmcache:latest docker/vllm-lmcache
 
   vllm:
     env:

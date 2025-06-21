@@ -4,19 +4,42 @@ dotenv:
   - .env
 
 tasks:
-  lmcache:
+  docker:
     cmds:
-      - uv run lmcache_server 127.0.0.1 65432
+      - docker buildx build -t registry.smtx.io/fanyang/vllm-lmcache:latest .
 
   vllm:
     env:
       LMCACHE_CONFIG_FILE: lmcache.yml
     cmds:
       - >
-        uv run vllm serve "Qwen/Qwen3-0.6B"
-        --max-model-len 32768
+        docker run --rm --gpus all --ipc=host --net=host
+        --ulimit memlock=-1 --ulimit stack=67108864
+        -e HF_ENDPOINT=https://hf-mirror.com
+        -e CUDA_VISIBLE_DEVICES=0
+        -v vllm-cache:/root/.cache
+        nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3
+        python3 -m vllm.entrypoints.openai.api_server
+        --model=Qwen/Qwen3-4B
+        --max_model_len=8192
         --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
 
-  print-env:
+  lmcache:
+    cmds:
+      - uv run lmcache_server 127.0.0.1 65432
+
+  test:
+    cmds:
+      - >
+        curl http://127.0.0.1:8000/v1/completions
+        -H "Content-Type: application/json"
+        -d '{
+          "model": "Qwen/Qwen3-4B",
+          "prompt": "<|begin_of_text|><|system|>\nYou are a helpful AI assistant.\n<|user|>\nWhat is the capital of France?\n<|assistant|>",
+          "max_tokens": 200,
+          "chat_template_kwargs": {"enable_thinking": false}
+        }'
+
+  print:
     cmds:
       - uv run python -c "import torch; print(torch.__version__); print(torch.cuda.get_arch_list()); print(torch.randn(1).cuda())"

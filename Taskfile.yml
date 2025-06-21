@@ -8,6 +8,24 @@ tasks:
     cmds:
       - docker buildx build -t registry.smtx.io/fanyang/vllm-lmcache:latest docker/vllm-lmcache
 
+  build-lmcache:
+    cmds:
+      - >
+        docker run --rm --gpus all --ipc=host --net=host
+        --ulimit memlock=-1 --ulimit stack=67108864
+        -e HF_ENDPOINT=https://hf-mirror.com
+        -v $(pwd):$(pwd) -w $(pwd)
+        nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3
+        bash -c "cd LMCache; python3 setup.py bdist_wheel"
+
+  cp:
+    cmds:
+      - cp LMCache/dist/*whl ./docker/vllm-lmcache
+
+  clean:
+    cmds:
+      - rm -rf LMCache/build LMCache/dist
+
   vllm:
     env:
       LMCACHE_CONFIG_FILE: lmcache.yml
@@ -18,11 +36,11 @@ tasks:
         -e HF_ENDPOINT=https://hf-mirror.com
         -e CUDA_VISIBLE_DEVICES=0
         -v vllm-cache:/root/.cache
-        nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3
+        registry.smtx.io/fanyang/vllm-lmcache:latest
         python3 -m vllm.entrypoints.openai.api_server
         --model=Qwen/Qwen3-4B
         --max_model_len=8192
-        --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
+        --kv-transfer-config '{"kv_connector": "LMCacheConnector", "kv_role": "kv_both"}'
 
   lmcache:
     cmds:

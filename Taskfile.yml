@@ -28,7 +28,7 @@ tasks:
 
   vllm:
     env:
-      LMCACHE_CONFIG_FILE: lmcache.yml
+      LMCACHE_CONFIG_FILE: /config/lmcache/lmcache.yml
     cmds:
       - >
         docker run --rm --gpus all --ipc=host --net=host
@@ -36,11 +36,28 @@ tasks:
         -e HF_ENDPOINT=https://hf-mirror.com
         -e CUDA_VISIBLE_DEVICES=0
         -v vllm-cache:/root/.cache
-        registry.smtx.io/fanyang/vllm-lmcache:latest
-        python3 -m vllm.entrypoints.openai.api_server
+        -v $(pwd)/config/lmcache:/config/lmcache
+        docker.io/library/lmcache:latest
         --model=Qwen/Qwen3-4B
         --max_model_len=8192
-        --kv-transfer-config '{"kv_connector": "LMCacheConnector", "kv_role": "kv_both"}'
+        --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
+
+  vllm-shell:
+    env:
+      LMCACHE_CONFIG_FILE: /config/lmcache/lmcache.yml
+    # docker.io/library/lmcache:latest
+    # registry.smtx.io/fanyang/vllm-lmcache:latest
+    cmds:
+      - >
+        docker run -it --rm --gpus all --ipc=host --net=host
+        --ulimit memlock=-1 --ulimit stack=67108864
+        -e HF_ENDPOINT=https://hf-mirror.com
+        -e CUDA_VISIBLE_DEVICES=0
+        -v vllm-cache:/root/.cache
+        -v $(pwd)/config/lmcache:/config/lmcache
+        --entrypoint /bin/bash
+        docker.io/library/lmcache:latest
+        -l
 
   lmcache:
     cmds:
@@ -49,15 +66,28 @@ tasks:
   test:
     cmds:
       - >
-        curl http://127.0.0.1:8000/v1/completions
+        curl http://127.0.0.1:8001/v1/completions
+        -X POST
         -H "Content-Type: application/json"
         -d '{
           "model": "Qwen/Qwen3-4B",
           "prompt": "<|begin_of_text|><|system|>\nYou are a helpful AI assistant.\n<|user|>\nWhat is the capital of France?\n<|assistant|>",
-          "max_tokens": 200,
+          "max_tokens": 100,
           "chat_template_kwargs": {"enable_thinking": false}
         }'
 
   print:
     cmds:
       - uv run python -c "import torch; print(torch.__version__); print(torch.cuda.get_arch_list()); print(torch.randn(1).cuda())"
+      - uv run python -c "import vllm.distributed.kv_transfer.kv_connector.v1.lmcache_connector"
+
+  run:
+    env:
+      LMCACHE_CONFIG_FILE: ./config/lmcache/lmcache.yml
+    cmds:
+      - >
+        uv run vllm serve
+        "Qwen/Qwen3-4B"
+        --host=127.0.0.1 --port=8001
+        --max_model_len=8192
+        --kv-transfer-config '{"kv_connector":"LMCacheConnectorV1", "kv_role":"kv_both"}'

@@ -7,7 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "fire>=0.7.0",
     "lmcache>=0.3.0",
-    "python-dotenv>=1.1.0"
+    "python-dotenv>=1.1.0",
+    "torch>=2.7.0",
+    "vllm>=0.9.1",
 ]
 
 [tool.uv]
@@ -16,10 +18,16 @@ index-url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu128" }]
 torchvision = [{ index = "pytorch-cu128" }]
+vllm = [{ index = "vllm-nightly" }]
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "vllm-nightly"
+url = "https://wheels.vllm.ai/nightly"
 explicit = true
 
 [dependency-groups]

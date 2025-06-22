@@ -1,63 +1,26 @@
 version: "3"
 
-dotenv:
-  - .env
+vars:
+  IMAGE_NAME: docker.io/fuis/tritonserver:25.05-vllm-python-py3-lmcache
 
 tasks:
-  docker:
-    cmds:
-      - docker buildx build -t registry.smtx.io/fanyang/vllm-lmcache:latest docker/vllm-lmcache
-
-  build-lmcache:
-    cmds:
-      - >
-        docker run --rm --gpus all --ipc=host --net=host
-        --ulimit memlock=-1 --ulimit stack=67108864
-        -e HF_ENDPOINT=https://hf-mirror.com
-        -v $(pwd):$(pwd) -w $(pwd)
-        nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3
-        bash -c "cd LMCache; python3 setup.py bdist_wheel"
-
-  cp:
-    cmds:
-      - cp LMCache/dist/*whl ./docker/vllm-lmcache
-
-  clean:
-    cmds:
-      - rm -rf LMCache/build LMCache/dist
-
   vllm:
-    env:
-      LMCACHE_CONFIG_FILE: /config/lmcache/lmcache.yml
     cmds:
+      # with hf mirror
+      # -e HF_ENDPOINT=https://hf-mirror.com
       - >
         docker run --rm --gpus all --ipc=host --net=host
         --ulimit memlock=-1 --ulimit stack=67108864
-        -e HF_ENDPOINT=https://hf-mirror.com
         -e CUDA_VISIBLE_DEVICES=0
-        -v vllm-cache:/root/.cache
+        -e LMCACHE_CONFIG_FILE=/config/lmcache/lmcache.yml
+        -e LMCACHE_USE_EXPERIMENTAL=True
+        -v /home/fanmi/.cache:/root/.cache
         -v $(pwd)/config/lmcache:/config/lmcache
-        docker.io/library/lmcache:latest
-        --model=Qwen/Qwen3-4B
-        --max_model_len=8192
-        --kv-transfer-config '{"kv_connector": "LMCacheConnectorV1", "kv_role": "kv_both"}'
-
-  vllm-shell:
-    env:
-      LMCACHE_CONFIG_FILE: /config/lmcache/lmcache.yml
-    # docker.io/library/lmcache:latest
-    # registry.smtx.io/fanyang/vllm-lmcache:latest
-    cmds:
-      - >
-        docker run -it --rm --gpus all --ipc=host --net=host
-        --ulimit memlock=-1 --ulimit stack=67108864
-        -e HF_ENDPOINT=https://hf-mirror.com
-        -e CUDA_VISIBLE_DEVICES=0
-        -v vllm-cache:/root/.cache
-        -v $(pwd)/config/lmcache:/config/lmcache
-        --entrypoint /bin/bash
-        docker.io/library/lmcache:latest
-        -l
+        {{.IMAGE_NAME}}
+        vllm serve
+        Qwen/Qwen3-0.6B
+        --max-model-len=8192
+        --kv-transfer-config '{"kv_connector": "LMCacheConnector", "kv_role": "kv_both"}'
 
   lmcache:
     cmds:
@@ -66,28 +29,26 @@ tasks:
   test:
     cmds:
       - >
-        curl http://127.0.0.1:8001/v1/completions
-        -X POST
-        -H "Content-Type: application/json"
-        -d '{
-          "model": "Qwen/Qwen3-4B",
-          "prompt": "<|begin_of_text|><|system|>\nYou are a helpful AI assistant.\n<|user|>\nWhat is the capital of France?\n<|assistant|>",
-          "max_tokens": 100,
-          "chat_template_kwargs": {"enable_thinking": false}
-        }'
+        curl "http://127.0.0.1:8000/v1/completions"
+        -H 'Content-Type: application/json'
+        -d '{"prompt": "How are you?"}'
 
   print:
-    cmds:
-      - uv run python -c "import torch; print(torch.__version__); print(torch.cuda.get_arch_list()); print(torch.randn(1).cuda())"
-      - uv run python -c "import vllm.distributed.kv_transfer.kv_connector.v1.lmcache_connector"
-
-  run:
-    env:
-      LMCACHE_CONFIG_FILE: ./config/lmcache/lmcache.yml
+    vars:
+      TEST_CMD: >
+                import torch;
+                print(torch.__version__);
+                print(torch.cuda.get_arch_list());
+                print(torch.randn(1).cuda());
+                import vllm.distributed.kv_transfer.kv_connector.lmcache_connector;
     cmds:
       - >
-        uv run vllm serve
-        "Qwen/Qwen3-4B"
-        --host=127.0.0.1 --port=8001
-        --max_model_len=8192
-        --kv-transfer-config '{"kv_connector":"LMCacheConnectorV1", "kv_role":"kv_both"}'
+        docker run --rm --gpus all --ipc=host --net=host
+        --ulimit memlock=-1 --ulimit stack=67108864
+        -e CUDA_VISIBLE_DEVICES=0
+        {{.IMAGE_NAME}}
+        python3 -c "{{.TEST_CMD}}"
+
+  docker:
+    cmds:
+      - docker buildx build -t {{.IMAGE_NAME}} .

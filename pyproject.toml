@@ -6,10 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fire>=0.7.0",
+    "huggingface-hub[cli]>=0.33.0",
     "lmcache>=0.3.0",
+    "pip>=25.1.1",
     "python-dotenv>=1.1.0",
-    "torch>=2.7.0",
-    "vllm>=0.9.1",
+    "wheel>=0.45.1",
 ]
 
 [tool.uv]
@@ -18,11 +19,12 @@ index-url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu128" }]
 torchvision = [{ index = "pytorch-cu128" }]
+torchaudio = [{ index = "pytorch-cu128" }]
 vllm = [{ index = "vllm-nightly" }]
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
+url = "https://mirrors.aliyun.com/pytorch-wheels/cu128"
 explicit = true
 
 [[tool.uv.index]]

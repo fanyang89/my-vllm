@@ -3,19 +3,16 @@
 # Usage
 
 ```bash
+# pull the image
 docker pull docker.io/fuis/tritonserver:25.05-vllm-python-py3-lmcache
 
-# or build by yourself, install go-task first
-task docker
-
 # start LMCache
-uv sync
-task lmcache
+uv sync; task lmcache
 
 # start vLLM
 task vllm
 
-# it works
+# test if it works
 task test
 ```
 

@@ -2,8 +2,13 @@ version: "3"
 
 vars:
   IMAGE_NAME: docker.io/fuis/tritonserver:25.05-vllm-python-py3-lmcache
+  MODEL_NAME: "AlphaGaO/Qwen3-14B-GPTQ"
 
 tasks:
+  default:
+    cmds:
+      - task: vllm
+
   vllm:
     cmds:
       # with hf mirror
@@ -14,11 +19,12 @@ tasks:
         -e CUDA_VISIBLE_DEVICES=0
         -e LMCACHE_CONFIG_FILE=/config/lmcache/lmcache.yml
         -e LMCACHE_USE_EXPERIMENTAL=True
+        -e HF_ENDPOINT=https://hf-mirror.com
         -v /home/fanmi/.cache:/root/.cache
         -v $(pwd)/config/lmcache:/config/lmcache
         {{.IMAGE_NAME}}
         vllm serve
-        Qwen/Qwen3-0.6B
+        {{.MODEL_NAME}}
         --max-model-len=8192
         --kv-transfer-config '{"kv_connector": "LMCacheConnector", "kv_role": "kv_both"}'
 
@@ -36,11 +42,11 @@ tasks:
   print:
     vars:
       TEST_CMD: >
-                import torch;
-                print(torch.__version__);
-                print(torch.cuda.get_arch_list());
-                print(torch.randn(1).cuda());
-                import vllm.distributed.kv_transfer.kv_connector.lmcache_connector;
+        import torch;
+        print(torch.__version__);
+        print(torch.cuda.get_arch_list());
+        print(torch.randn(1).cuda());
+        import vllm.distributed.kv_transfer.kv_connector.lmcache_connector;
     cmds:
       - >
         docker run --rm --gpus all --ipc=host --net=host
@@ -52,3 +58,9 @@ tasks:
   docker:
     cmds:
       - docker buildx build -t {{.IMAGE_NAME}} .
+
+  download:
+    env:
+      HF_ENDPOINT: https://hf-mirror.com
+    cmds:
+      - uvx --from "huggingface_hub[cli]" huggingface-cli download {{.MODEL_NAME}}

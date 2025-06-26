@@ -1,6 +1,5 @@
 remote_url: "lm://127.0.0.1:65432"
 remote_serde: "cachegen"
-
-chunk_size: 256
+chunk_size: 256 # 256 Tokens per KV Chunk
 local_cpu: true
-max_local_cpu_size: 5.0  # 5GB CPU memory limit
+max_local_cpu_size: 10.0 # CPU memory limit
